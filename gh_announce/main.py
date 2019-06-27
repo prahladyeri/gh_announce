@@ -20,11 +20,36 @@ config_keys = [
 	
 opt_keys = ['Full_Name']
 
-def tw_announce(tag_name, repo_name, repo_url):
-	ss = "I have" if (config['Full_Name'] == None or config['Full_Name'] == "") else config["Full_Name"] + " has"
-	ss += " just released version %s of %s on Github. Check it out! %s" % (tag_name, repo_name.split("/")[1], repo_url)
-	#print("TWEETING: " + ss)
+def fetch_topics(repo_name):
+	try:
+		# GET /repos/:owner/:repo/topics
+		url = "https://api.github.com/repos/%s/topics" % repo_name
+		resp = requests.get(url, headers={'Accept':'application/vnd.github.mercy-preview+json'})
+		data = json.loads(resp.text)
+		print("topics updated for %s:" % repo_name, data['names'])
+		names = ["#" + name for name in data['names']]
+		return names
+		# if len(acts) == 0:
+			# print("Zero events found, is this the correct github repo I'm looking at?")
+			# print("Run the program again with --config parameter to set the correct values")
+			# return
+		# twcnt = 0
+		# for i in range(len(acts)):
+	except Exception as ex:
+		print("Error occurred while fetching topics: " + str(ex))
+		return []
 
+
+def tw_announce(tag_name, repo_name, repo_url, topics):
+	proj_name = repo_name.split("/")[1]
+	hash_tags = ",".join(topics)
+	ss = "I have" if (config['Full_Name'] == None or config['Full_Name'] == "") else config["Full_Name"] + " has"
+	ss += " just released version %s of %s on Github. Check it out! %s %s" % (tag_name, proj_name, repo_url, hash_tags)
+	if len(ss) > 280: 
+		print("skipped %s as string length is greater than 280" % repo_name)
+		return
+	#print("TWEETING: " + ss)
+	#return
 	if config['twitter_consumer_api_key'] == "":
 		print("twitter api credentials missing")
 		return
@@ -53,7 +78,7 @@ def check_activity():
 			if payload['ref_type'] != 'tag':
 				continue
 			repo = act['repo']
-			repo_url = "https://github.com/" + repo['name']
+			repo_url = "https://github.com/" + repo['name'] #prahladyeri/gh_announce
 			tag_name = payload['ref']
 			
 			dt = parse_date(act['created_at'])
@@ -64,6 +89,12 @@ def check_activity():
 			
 			if delta.days >= 2: #this push is more than two days old, so just ignore
 				continue
+				
+			#try to fetch topics
+			if not 'topics' in config: config['topics'] = {}
+			if repo['name'] not in config['topics'].keys():
+				config['topics'][repo['name']] = fetch_topics(repo['name'])
+				#fetch_topics(repo['name'])
 				
 			tweet = False
 			#check local config data to know whether we've already tweeted for this release
@@ -79,14 +110,13 @@ def check_activity():
 					pushes.append(act['id'])
 			if tweet:
 				try:
-					tw_announce(tag_name, repo['name'], repo_url)
+					tw_announce(tag_name, repo['name'], repo_url, config['topics'][repo['name']])
 					twcnt += 1
 				except Exception as ex:
 					print("Error occurred: ", str(ex))
-			config['pushes'] = pushes
+			config['pushes'] = pushes #TODO: housekeep the pushes list occasionally
 			cfgsaver.save(pkg_name, config)
-				 
-			#TODO: housekeep the pushes list occasionally
+			
 	if twcnt == 0: print("no status to update right now")
 			
 

@@ -20,6 +20,6 @@ I happen to maintain a lot of python projects on github such as [distroverify](h
 
 # Usage
 
-	gh_configure --config # (first time only to configure your github username & twitter api details)
+	gh_announce --config # (first time only to configure your github username & twitter api details)
 	
 	gh_announce # (set as a cron job using crontab -e, etc.)
