@@ -42,7 +42,7 @@ def fetch_topics(repo_name):
 
 def tw_announce(tag_name, repo_name, repo_url, topics):
 	proj_name = repo_name.split("/")[1]
-	hash_tags = ",".join(topics)
+	hash_tags = " ".join(topics)
 	ss = "I have" if (config['Full_Name'] == None or config['Full_Name'] == "") else config["Full_Name"] + " has"
 	ss += " just released version %s of %s on Github. Check it out! %s %s" % (tag_name, proj_name, repo_url, hash_tags)
 	if len(ss) > 280: 
