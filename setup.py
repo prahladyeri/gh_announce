@@ -31,7 +31,7 @@ s = setup(
 	include_package_data=True,
 	entry_points={
 		"console_scripts": [
-			"gh_announce = gh_announce.main:main",
+			"gh_announce = gh_announce.gh_announce:main",
 		],
 	},
 	install_requires=['requests','tweepy'],
