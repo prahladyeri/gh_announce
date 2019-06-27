@@ -95,7 +95,7 @@ def parse_date(dt):
         return datetime.strptime(dt, format + 'Z')
     return datetime.strptime(dt, format)
 	
-def main(args):
+def main(args=[]):
 	global config
 	if '-v' in args or '--version' in args:
 		print("%s version %s" % (__title__, __version__))
