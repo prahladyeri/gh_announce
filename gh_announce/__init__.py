@@ -3,7 +3,7 @@ __email__ = "prahladyeri@yahoo.com"
 __copyright__ = "(c) 2019 Prahlad Yeri"
 
 __license__ = "MIT"
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __title__ = 'GH Announce'
 __description__ = 'Twitter bot that posts a tweet each time you make a release on github!'
 
