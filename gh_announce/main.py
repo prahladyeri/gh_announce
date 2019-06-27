@@ -45,6 +45,7 @@ def check_activity():
 		print("Zero events found, is this the correct github repo I'm looking at?")
 		print("Run the program again with --config parameter to set the correct values")
 		return
+	twcnt = 0
 	for i in range(len(acts)):
 		act = acts[i]
 		if act['type'] == 'CreateEvent': #latest tag
@@ -79,12 +80,14 @@ def check_activity():
 			if tweet:
 				try:
 					tw_announce(tag_name, repo['name'], repo_url)
+					twcnt += 1
 				except Exception as ex:
 					print("Error occurred: ", str(ex))
 			config['pushes'] = pushes
 			cfgsaver.save(pkg_name, config)
 				 
 			#TODO: housekeep the pushes list occasionally
+	if twcnt == 0: print("no status to update right now")
 			
 
 def parse_date(dt):
