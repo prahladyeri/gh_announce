@@ -1,0 +1,2 @@
+include setup.py
+include gh_announce/cfg.json
