@@ -1,4 +1,13 @@
+![pypi](https://img.shields.io/pypi/v/cfgsaver.svg)
+![license](https://img.shields.io/github/license/prahladyeri/cfgsaver.svg)
+![last-commit](https://img.shields.io/github/last-commit/prahladyeri/cfgsaver.svg)
+[![donate](https://img.shields.io/badge/-Donate-blue.svg?logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JM8FUXNFUK6EU)
+[![follow](https://img.shields.io/twitter/follow/prahladyeri.svg?style=social)](https://twitter.com/prahladyeri)
+
 # gh-announce
+
+![project logo](https://raw.githubusercontent.com/prahladyeri/gh_announce/master/logo.png)
+
 Twitter bot that posts a tweet each time you make a release on github!
 
 # Synopsis
