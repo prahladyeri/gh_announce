@@ -5,6 +5,6 @@ __copyright__ = "(c) 2019 Prahlad Yeri"
 __license__ = "MIT"
 __version__ = "0.0.1"
 __title__ = 'GH Announce'
-__description__ = 'Twitter bot that tweets each time you make a release on github!'
+__description__ = 'Twitter bot that posts a tweet each time you make a release on github!'
 
 pkg_name = "gh_announce"

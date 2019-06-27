@@ -1,5 +1,5 @@
 # gh-announce
-Twitter bot that tweets each time you make a release on github!
+Twitter bot that posts a tweet each time you make a release on github!
 
 # Installation
 

@@ -3,23 +3,39 @@ import argparse
 import os, sys
 from datetime import datetime
 from cfgsaver import cfgsaver
-# import time
-# import hashlib
 import json
+import tweepy
 from gh_announce import pkg_name, __title__, __description__, __version__
 
 config = cfgsaver.get(pkg_name)
 
-config_keys = ['github_username',
+config_keys = [
+	'github_username',
 	'twitter_consumer_api_key',
 	'twitter_consumer_secret',
 	'twitter_access_token',
-	'access_token_secret',
+	'twitter_access_token_secret',
+	'Full_Name',
 	]
+	
+opt_keys = ['Full_Name']
 
+def tw_announce(tag_name, repo_name, repo_url):
+	ss = "I have" if (config['Full_Name'] == None or config['Full_Name'] == "") else config["Full_Name"] + " has"
+	ss += " just released version %s of %s on Github. Check it out! %s" % (tag_name, repo_name.split("/")[1], repo_url)
+	#print("TWEETING: " + ss)
 
-def tw_announce(txt):
-	print("TWEETING: " + txt)
+	if config['twitter_consumer_api_key'] == "":
+		print("twitter api credentials missing")
+		return
+	auth = tweepy.OAuthHandler(config['twitter_consumer_api_key'], 
+		config['twitter_consumer_secret'],
+		)
+	auth.set_access_token(config['twitter_access_token'], config['twitter_access_token_secret'])
+	api = tweepy.API(auth)
+	api.update_status(ss)
+	print("successfully updated status for repo: %s, tag: %s" % (repo_name, tag_name))
+	
 
 def check_activity():
 	url = "https://api.github.com/users/%s/events" % config['github_username']
@@ -61,7 +77,10 @@ def check_activity():
 					tweet = True
 					pushes.append(act['id'])
 			if tweet:
-				tw_announce("I have just released %s of %s on Github. Check it out! %s" % (tag_name, repo['name'].split("/")[1], repo_url))
+				try:
+					tw_announce(tag_name, repo['name'], repo_url)
+				except Exception as ex:
+					print("Error occurred: ", str(ex))
 			config['pushes'] = pushes
 			cfgsaver.save(pkg_name, config)
 				 
@@ -103,7 +122,7 @@ section and note down the following four kinds of keys:
 Once you have the above information, you can enter the configuration values below.
 
 """)
-		config = cfgsaver.get_from_cmd(pkg_name, config_keys)
+		config = cfgsaver.get_from_cmd(pkg_name, config_keys, opt_keys)
 		if config == None:
 			print("Cound't read config values, please start the program again using --config parameter")
 			return
