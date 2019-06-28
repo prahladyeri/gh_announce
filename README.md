@@ -35,4 +35,4 @@ I happen to maintain a lot of python projects on github such as [distroverify](h
 
 - Result
 
-![sample screen](https://raw.githubusercontent.com/prahladyeri/gh_announce/master/screen.png)
+[![sample screen](https://raw.githubusercontent.com/prahladyeri/gh_announce/master/screen.png)](https://twitter.com/prahladyeri/status/1144223088201986049)
