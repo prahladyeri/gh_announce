@@ -62,7 +62,7 @@ def tw_announce(tag_name, repo_name, repo_url, topics):
 		api.update_status(ss)
 		print("successfully updated status for repo: %s, tag: %s" % (repo_name, tag_name))
 	else:
-		print("skipped update")
+		print("skipped update: status for repo: %s, tag: %s" % (repo_name, tag_name))
 	
 
 def check_activity():
