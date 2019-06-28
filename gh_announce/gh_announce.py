@@ -20,6 +20,8 @@ config_keys = [
 	
 opt_keys = ['Full_Name']
 
+dry_run = False
+
 def fetch_topics(repo_name):
 	try:
 		# GET /repos/:owner/:repo/topics
@@ -51,13 +53,16 @@ def tw_announce(tag_name, repo_name, repo_url, topics):
 	if config['twitter_consumer_api_key'] == "":
 		print("twitter api credentials missing")
 		return
-	auth = tweepy.OAuthHandler(config['twitter_consumer_api_key'], 
-		config['twitter_consumer_secret'],
-		)
-	auth.set_access_token(config['twitter_access_token'], config['twitter_access_token_secret'])
-	api = tweepy.API(auth)
-	api.update_status(ss)
-	print("successfully updated status for repo: %s, tag: %s" % (repo_name, tag_name))
+	if not dry_run:
+		auth = tweepy.OAuthHandler(config['twitter_consumer_api_key'], 
+			config['twitter_consumer_secret'],
+			)
+		auth.set_access_token(config['twitter_access_token'], config['twitter_access_token_secret'])
+		api = tweepy.API(auth)
+		api.update_status(ss)
+		print("successfully updated status for repo: %s, tag: %s" % (repo_name, tag_name))
+	else:
+		print("skipped update")
 	
 
 def check_activity():
@@ -97,16 +102,14 @@ def check_activity():
 			tweet = False
 			#check local config data to know whether we've already tweeted for this release
 			if not 'pushes' in config:
-				pushes = [act['id']]
+				pushes = [] #[act['id']]
 				tweet = True
 			else:
 				pushes = config['pushes']
-				if act['id'] in pushes:
-					pass #do nothing
-				else:
+				if not act['id'] in pushes:
 					tweet = True
-					pushes.append(act['id'])
 			if tweet:
+				if not dry_run: pushes.append(act['id'])
 				try:
 					tw_announce(tag_name, repo['name'], repo_url, config['topics'][repo['name']])
 					twcnt += 1
@@ -127,13 +130,14 @@ def parse_date(dt):
     return datetime.strptime(dt, format)
 	
 def announce(args=[]):
-	global config
+	global config, dry_run
 	if '-v' in args or '--version' in args:
 		print("%s version %s" % (__title__, __version__))
 		return
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-v', '--version', help='Version', action='store_true')
 	parser.add_argument('-c', '--config',  default=False, action='store_true', help='setup the app configuration')
+	parser.add_argument('-n', '--dry-run',  default=False, action='store_true', help='dry run mode')
 	args = parser.parse_args(args)
 	
 	if args.config or config == None:
@@ -159,6 +163,8 @@ Once you have the above information, you can enter the configuration values belo
 			return
 		if args.config:
 			return
+	dry_run = args.dry_run
+	if dry_run: print("running in dry run mode")
 	check_activity()
 	
 def main():
