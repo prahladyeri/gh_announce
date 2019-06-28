@@ -20,6 +20,19 @@ I happen to maintain a lot of python projects on github such as [distroverify](h
 
 # Usage
 
-	gh_announce --config # (first time only to configure your github username & twitter api details)
+- First time only to configure your github username & twitter api details:
+
+	> gh_announce --config
+
+- Set as a cron job using crontab -e, etc.
 	
-	gh_announce # (set as a cron job using crontab -e, etc.)
+	> gh_announce
+	successfully updated status for repo: prahladyeri/distroverify, tag: 1.0.4
+	successfully updated status for repo: prahladyeri/gh_announce, tag: 0.0.3
+	successfully updated status for repo: prahladyeri/cfgsaver, tag: 1.0.4
+	successfully updated status for repo: prahladyeri/gh_announce, tag: 0.0.2
+	successfully updated status for repo: prahladyeri/gh_announce, tag: 0.0.1	
+
+- Result
+
+![sample screen](https://raw.githubusercontent.com/prahladyeri/gh_announce/master/screen.png)

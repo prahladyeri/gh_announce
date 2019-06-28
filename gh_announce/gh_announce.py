@@ -48,8 +48,6 @@ def tw_announce(tag_name, repo_name, repo_url, topics):
 	if len(ss) > 280: 
 		print("skipped %s as string length is greater than 280" % repo_name)
 		return
-	#print("TWEETING: " + ss)
-	#return
 	if config['twitter_consumer_api_key'] == "":
 		print("twitter api credentials missing")
 		return
