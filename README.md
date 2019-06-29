@@ -20,15 +20,19 @@ I happen to maintain a lot of python projects on github such as [distroverify](h
 
 # Usage
 
-- First time only to configure your github username & twitter api details:
+## First time only to configure your github username & twitter api details:
 
 		> gh_announce --config
 
-- Set as a cron job using crontab -e, etc.
+## Testing the app
 	
 		> gh_announce
 		successfully updated status for repo: prahladyeri/distroverify, tag: 1.0.4
-
-- Result
+		
+## Result
 
 [![sample screen](https://raw.githubusercontent.com/prahladyeri/gh_announce/master/screen.png)](https://twitter.com/prahladyeri/status/1144223088201986049)
+
+## Set as a cron job by running `crontab -e`:
+
+		* 12 * * * gh_announce
