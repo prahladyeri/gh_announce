@@ -42,7 +42,7 @@ def fetch_topics(repo_name):
 		return []
 
 
-def tw_announce(tag_name, repo_name, repo_url, topics):
+def tw_announce(id, tag_name, repo_name, repo_url, topics):
 	proj_name = repo_name.split("/")[1]
 	hash_tags = " ".join(topics)
 	ss = "I have" if (config['Full_Name'] == None or config['Full_Name'] == "") else config["Full_Name"] + " has"
@@ -60,9 +60,9 @@ def tw_announce(tag_name, repo_name, repo_url, topics):
 		auth.set_access_token(config['twitter_access_token'], config['twitter_access_token_secret'])
 		api = tweepy.API(auth)
 		api.update_status(ss)
-		print("successfully updated status for repo: %s, tag: %s" % (repo_name, tag_name))
+		print("%s: successfully updated status for repo %s, tag: %s" % (id, repo_name, tag_name))
 	else:
-		print("skipped update: status for repo: %s, tag: %s" % (repo_name, tag_name))
+		print("%s: skipped update: status for repo: %s, tag: %s" % (id, repo_name, tag_name))
 	
 
 def check_activity():
@@ -109,11 +109,12 @@ def check_activity():
 				pushes = config['pushes']
 				if not act['id'] in pushes:
 					tweet = True
-			if tweet and repo['name'] not in recently_updated:
+			if tweet:
 				if not dry_run: pushes.append(act['id'])
 				try:
-					tw_announce(tag_name, repo['name'], repo_url, config['topics'][repo['name']])
-					twcnt += 1
+					if repo['name'] not in recently_updated:
+						tw_announce(act['id'], tag_name, repo['name'], repo_url, config['topics'][repo['name']])
+						twcnt += 1
 					recently_updated.append(repo['name'])
 				except Exception as ex:
 					print("Error occurred: ", str(ex))
@@ -166,7 +167,7 @@ Once you have the above information, you can enter the configuration values belo
 		if args.config:
 			return
 	dry_run = args.dry_run
-	if dry_run: print("running in dry run mode")
+	if dry_run: print("running in %s mode" % ("dry run" if dry_run else "normal"))
 	check_activity()
 	
 def main():
