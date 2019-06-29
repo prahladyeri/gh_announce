@@ -24,12 +24,12 @@ I happen to maintain a lot of python projects on github such as [distroverify](h
 
 		> gh_announce --config
 
-* Testing the app
+* Testing the app:
 	
 		> gh_announce
 		successfully updated status for repo: prahladyeri/distroverify, tag: 1.0.4
 		
-* Result
+* Result:
 
 [![sample screen](https://raw.githubusercontent.com/prahladyeri/gh_announce/master/screen.png)](https://twitter.com/prahladyeri/status/1144223088201986049)
 
