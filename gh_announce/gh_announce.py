@@ -74,6 +74,7 @@ def check_activity():
 		print("Run the program again with --config parameter to set the correct values")
 		return
 	twcnt = 0
+	recently_updated = []
 	for i in range(len(acts)):
 		act = acts[i]
 		if act['type'] == 'CreateEvent': #latest tag
@@ -108,11 +109,12 @@ def check_activity():
 				pushes = config['pushes']
 				if not act['id'] in pushes:
 					tweet = True
-			if tweet:
+			if tweet and repo['name'] not in recently_updated:
 				if not dry_run: pushes.append(act['id'])
 				try:
 					tw_announce(tag_name, repo['name'], repo_url, config['topics'][repo['name']])
 					twcnt += 1
+					recently_updated.append(repo['name'])
 				except Exception as ex:
 					print("Error occurred: ", str(ex))
 			config['pushes'] = pushes #TODO: housekeep the pushes list occasionally
