@@ -1,0 +1,13 @@
+2ba53f5 build: released 0.0.4
+d9bce97 fix: added missing dependency
+f971a20 fix: issues in storing tweeted commit ids, updated readme
+2b43820 fix: fixed repeated tweets for same repo's different releases
+9fd873a fix: updated skipped message during dry run
+02f88b0 feat: added dry-run mode
+11bbf62 fix: changed hash tags delimeter from comma to space
+f7814e3 chore: released 0.0.3
+55ceb5b fix: arguments in main function
+edbe208 feat: added status message when no tweets are posted
+4de51bd chore: released 0.0.2
+61961af fix: added default argument to main function
+d841e8d chore: released 0.0.1
