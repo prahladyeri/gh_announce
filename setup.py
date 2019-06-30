@@ -34,7 +34,7 @@ s = setup(
 			"gh_announce = gh_announce.gh_announce:main",
 		],
 	},
-	install_requires=['requests','tweepy'],
+	install_requires=['requests', 'tweepy', 'cfgsaver'],
 	author=__author__,
 	author_email=__email__,
     classifiers=[
