@@ -21,6 +21,7 @@ config_keys = [
 opt_keys = ['Full_Name']
 
 dry_run = False
+refresh_tags = False
 
 def fetch_topics(repo_name):
 	try:
@@ -28,8 +29,8 @@ def fetch_topics(repo_name):
 		url = "https://api.github.com/repos/%s/topics" % repo_name
 		resp = requests.get(url, headers={'Accept':'application/vnd.github.mercy-preview+json'})
 		data = json.loads(resp.text)
-		print("topics updated for %s:" % repo_name, data['names'])
-		names = ["#" + name for name in data['names']]
+		names = ["#" + name.replace('-', '_') for name in data['names']]
+		print("topics fetched for %s:" % repo_name, names)
 		return names
 		# if len(acts) == 0:
 			# print("Zero events found, is this the correct github repo I'm looking at?")
@@ -40,6 +41,29 @@ def fetch_topics(repo_name):
 	except Exception as ex:
 		print("Error occurred while fetching topics: " + str(ex))
 		return []
+		
+def do_refresh_tags():
+	try:
+		# GET /repos/:owner/:repo/topics
+		url = "https://api.github.com/users/%s/repos" % config['github_username']
+		#print("URL: ",url)
+		resp = requests.get(url) #headers={'Accept':'application/vnd.github.mercy-preview+json'}
+		data = json.loads(resp.text)
+		print("%d repos fetched" % len(data))
+		#print("data: ",data)
+		if not 'topics' in config: config['topics'] = {}
+		for repo in data:
+			print("refreshing tags for %s..." % repo['full_name'])
+			if not dry_run:
+				topics = fetch_topics(repo['full_name'])
+				print("%d tags fetched" % len(topics))
+				config['topics'][repo['full_name']] = topics
+				cfgsaver.save(pkg_name, config)
+				print("")
+	except Exception as ex:
+		print("Error occurred: " + str(ex))
+		#raise
+	
 
 
 def tw_announce(id, tag_name, repo_name, repo_url, topics):
@@ -98,7 +122,6 @@ def check_activity():
 			if not 'topics' in config: config['topics'] = {}
 			if repo['name'] not in config['topics'].keys():
 				config['topics'][repo['name']] = fetch_topics(repo['name'])
-				#fetch_topics(repo['name'])
 				
 			tweet = False
 			#check local config data to know whether we've already tweeted for this release
@@ -133,7 +156,7 @@ def parse_date(dt):
     return datetime.strptime(dt, format)
 	
 def announce(args=[]):
-	global config, dry_run
+	global config, dry_run, refresh_tags
 	if '-v' in args or '--version' in args:
 		print("%s version %s" % (__title__, __version__))
 		return
@@ -141,6 +164,7 @@ def announce(args=[]):
 	parser.add_argument('-v', '--version', help='Version', action='store_true')
 	parser.add_argument('-c', '--config',  default=False, action='store_true', help='setup the app configuration')
 	parser.add_argument('-n', '--dry-run',  default=False, action='store_true', help='dry run mode')
+	parser.add_argument('-r', '--refresh-tags',  default=False, action='store_true', help='refresh tags')
 	args = parser.parse_args(args)
 	
 	if args.config or config == None:
@@ -164,11 +188,15 @@ Once you have the above information, you can enter the configuration values belo
 		if config == None:
 			print("Cound't read config values, please start the program again using --config parameter")
 			return
-		if args.config:
+		elif args.config:
 			return
 	dry_run = args.dry_run
 	if dry_run: print("running in %s mode" % ("dry run" if dry_run else "normal"))
-	check_activity()
+	if args.refresh_tags:
+		refresh_tags = True
+		do_refresh_tags()
+	else:
+		check_activity()
 	
 def main():
 	announce(sys.argv[1:])
