@@ -132,7 +132,7 @@ def check_activity():
 				pushes = config['pushes']
 				if not act['id'] in pushes:
 					tweet = True
-			if tweet:
+			if tweet: # @todo: check whether dry_run even works or not
 				if not dry_run: pushes.append(act['id'])
 				try:
 					if repo['name'] not in recently_updated:
